@@ -1,43 +1,37 @@
-import pygame
+import matplotlib.pyplot as plt
 import numpy as np
 
+# Зчитування датасету з файлу
 def read_dataset(filename):
     data = np.loadtxt(filename)
     return data
 
-def plot_dataset(data):
-    pygame.init()
+# Основна функція
+def plot_dataset(data, output_file):
+    # Розділення координат X і Y
+    x, y = data[:, 0], data[:, 1]
 
-    width, height = 960, 540
-    screen = pygame.display.set_mode((width, height))
-    pygame.display.set_caption("Dataset Visualization")
+    # Створення фігури з заданими розмірами
+    fig, ax = plt.subplots(figsize=(960 / 100, 540 / 100), dpi=100)  # 960x540 пікселів
 
-    # Білий фон
-    screen.fill((255, 255, 255))
+    # Відображення точок
+    ax.scatter(x, y, color='blue', s=10)
 
-    # Малювання точок
-    for point in data:
-        x, y = point
-        pygame.draw.circle(screen, (0, 0, 255), (int(x), height - int(y)), 3)  # Y-координата інвертована
+    # Відключення осей і шкал
+    ax.axis('off')
 
-    # Оновлення екрану
-    pygame.display.flip()
+    # Збереження результату
+    plt.savefig(output_file, format='png', bbox_inches='tight', pad_inches=0)
+    print(f"Графік збережено у файл: {output_file}")
 
-    # Очікування закриття вікна
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-    pygame.quit()
-
+# Приклад використання
 if __name__ == "__main__":
-    input_file = "DS3.txt"  
+    input_file = "DS3.txt"  # Файл із даними
+    output_file = "output_plot.png"  # Файл для збереження графіку
 
     try:
         dataset = read_dataset(input_file)
-        plot_dataset(dataset)
+        plot_dataset(dataset, output_file)
     except FileNotFoundError:
         print(f"Файл {input_file} не знайдено.")
     except Exception as e:
